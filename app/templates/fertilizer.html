@@ -1,0 +1,54 @@
+{% extends 'layout.html' %} {% block body %}
+
+<div class="container py-5 mt-5">
+  <div class="row mb-4">
+    <div class="col-12 text-center">
+      <h2 class="page-title d-flex justify-content-center align-items-center" style="gap: 10px;"><i data-lucide="flask-conical" style="color: var(--primary-color);"></i> Fertilizer Recommendation</h2>
+      <p class="page-subtitle">Get informed advice on fertilizer usage based on soil content</p>
+    </div>
+  </div>
+
+  <div class="glass-panel" style="max-width: 500px;">
+    {% if error %}
+    <div class="alert alert-danger d-flex align-items-center" role="alert" style="border-radius: 12px; font-weight: 500;">
+      <i data-lucide="alert-circle" class="mr-2"></i> {{ error }}
+    </div>
+    {% endif %}
+
+    <form class="modern-form" method="POST" action="{{ url_for('fert_recommend') }}">
+      
+      <div class="form-group">
+        <label for="Nitrogen">Nitrogen (N) Value</label>
+        <input type="number" class="form-control" id="Nitrogen" name="nitrogen" placeholder="e.g. 50" required />
+      </div>
+
+      <div class="form-group">
+        <label for="Phosphorous">Phosphorous (P) Value</label>
+        <input type="number" class="form-control" id="Phosphorous" name="phosphorous" placeholder="e.g. 50" required />
+      </div>
+
+      <div class="form-group">
+        <label for="Pottasium">Potassium (K) Value</label>
+        <input type="number" class="form-control" id="Pottasium" name="pottasium" placeholder="e.g. 50" required />
+      </div>
+
+      <div class="form-group">
+        <label for="crop">Target Crop</label>
+        <select name="cropname" class="form-control" id="crop" required>
+          <option value="" {% if not preselected_crop %}selected{% endif %}>Select crop</option>
+          {% for c in crops %}
+            <option value="{{ c }}" {% if preselected_crop == c %}selected{% endif %}>{{ c.capitalize() }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="text-center mt-5">
+        <button type="submit" class="btn-modern d-inline-flex justify-content-center align-items-center" style="gap: 8px;">
+          <i data-lucide="flask-conical"></i> Analyze Fertilizer
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

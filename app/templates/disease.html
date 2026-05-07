@@ -1,0 +1,71 @@
+{% extends 'layout.html' %} {% block body %}
+
+<div class="container py-5 mt-5">
+  <div class="row mb-4">
+    <div class="col-12 text-center">
+      <h2 class="page-title d-flex justify-content-center align-items-center" style="gap: 10px;"><i data-lucide="bug" style="color: var(--primary-color);"></i> Disease Detection</h2>
+      <p class="page-subtitle">Upload an image of a leaf to identify the plant disease</p>
+    </div>
+  </div>
+
+  <div class="glass-panel" style="max-width: 500px; text-align: center;">
+    {% if error %}
+    <div class="alert alert-warning d-flex align-items-center" role="alert" style="border-radius: 12px; font-weight: 500;">
+      <i data-lucide="alert-triangle" class="mr-2"></i> {{ error }}
+    </div>
+    {% endif %}
+
+    <form class="modern-form" method="post" enctype="multipart/form-data" id="disease-form">
+      
+      <div class="form-group mb-5">
+        <label for="inputfile" style="font-size: 16px; margin-bottom: 15px;">Please Upload Plant Leaf Image</label>
+        <div style="position: relative; overflow: hidden; display: inline-block;">
+            <!-- Modern File Upload Wrapper -->
+            <button class="btn btn-outline-secondary d-inline-flex justify-content-center align-items-center" style="border-radius: 12px; padding: 12px 24px; font-weight: 500; gap: 8px;" onclick="document.getElementById('inputfile').click(); return false;">
+                <i data-lucide="upload"></i> Choose File
+            </button>
+            <input type="file" name="file" id="inputfile" onchange="preview_image(event)" style="font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer;" required>
+        </div>
+      </div>
+
+      <div class="mb-4" style="min-height: 200px; display: flex; align-items: center; justify-content: center; background: #f8fafc; border-radius: 12px; border: 2px dashed #cbd5e1;">
+        <img id="output-image" class="img-fluid rounded" style="max-height: 250px; display: none;" />
+        <span id="upload-placeholder" style="color: #94a3b8; font-weight: 500;">Image Preview</span>
+      </div>
+
+      <button class="btn-modern mt-3 d-inline-flex justify-content-center align-items-center" style="gap: 8px;" type="submit" id="predict-btn">
+        <i data-lucide="search"></i> Detect Disease
+      </button>
+
+      <div id="loader" class="loader-container mt-3">
+        <div class="spinner-modern"></div>
+        <p class="mt-2 text-muted font-weight-bold">Scanning Image...</p>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<script type="text/javascript">
+  function preview_image(event) {
+    var reader = new FileReader();
+    reader.onload = function () {
+      var output = document.getElementById('output-image');
+      var placeholder = document.getElementById('upload-placeholder');
+      output.src = reader.result;
+      output.style.display = 'block';
+      placeholder.style.display = 'none';
+    }
+    if (event.target.files[0]) {
+        reader.readAsDataURL(event.target.files[0]);
+    }
+  }
+
+  document.getElementById('disease-form').addEventListener('submit', function () {
+    document.getElementById('predict-btn').disabled = true;
+    document.getElementById('predict-btn').innerHTML = 'Scanning...';
+    document.getElementById('loader').style.display = 'block';
+  });
+</script>
+
+{% endblock %}

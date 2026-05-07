@@ -1,0 +1,347 @@
+{% extends 'layout.html' %} {% block body %}
+
+<style>
+  /* ---- Location Auto-Fill Panel ---- */
+  .location-panel {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(59, 130, 246, 0.08) 100%);
+    border: 1.5px solid rgba(16, 185, 129, 0.3);
+    border-radius: 16px;
+    padding: 1.4rem 1.6rem 1rem;
+    margin-bottom: 1.8rem;
+    position: relative;
+  }
+
+  .location-panel .panel-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--primary-color, #10b981);
+    margin-bottom: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .location-search-row {
+    display: flex;
+    gap: 0.6rem;
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+
+  .location-search-row input[type="text"] {
+    flex: 1;
+    min-width: 180px;
+    border-radius: 10px;
+    border: 1.5px solid #d1d5db;
+    padding: 0.55rem 1rem;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+    background: #fff;
+  }
+
+  .location-search-row input[type="text"]:focus {
+    border-color: var(--primary-color, #10b981);
+  }
+
+  .loc-btn {
+    border: none;
+    border-radius: 10px;
+    padding: 0.55rem 1.1rem;
+    font-size: 0.87rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .loc-btn-fetch {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #fff;
+  }
+
+  .loc-btn-fetch:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+  }
+
+  .loc-btn-gps {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: #fff;
+  }
+
+  .loc-btn-gps:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+  }
+
+  #location-status {
+    margin-top: 0.65rem;
+    font-size: 0.85rem;
+    min-height: 1.3em;
+    font-weight: 500;
+  }
+
+  .status-success {
+    color: #059669;
+  }
+
+  .status-error {
+    color: #dc2626;
+  }
+
+  .status-loading {
+    color: #6b7280;
+  }
+
+  .filled-badge {
+    display: inline-block;
+    background: #d1fae5;
+    color: #065f46;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 1px 7px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+</style>
+
+<div class="container py-5 mt-5">
+  <div class="row mb-4">
+    <div class="col-12 text-center">
+      <h2 class="page-title d-flex justify-content-center align-items-center" style="gap: 10px;">
+        <i data-lucide="leaf" style="color: var(--primary-color);"></i> Crop Recommendation
+      </h2>
+      <p class="page-subtitle">Find the best crop to grow for your soil and climate</p>
+    </div>
+  </div>
+
+  <div class="glass-panel">
+    {% if error %}
+    <div class="alert alert-danger d-flex align-items-center" role="alert"
+      style="border-radius: 12px; font-weight: 500;">
+      <i data-lucide="alert-circle" class="mr-2"></i> {{ error }}
+    </div>
+    {% endif %}
+
+    <!-- ===== Location Auto-Fill ===== -->
+    <div class="location-panel">
+      <div class="panel-title">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+          <circle cx="12" cy="9" r="2.5" />
+        </svg>
+        Auto-Fill from Location
+      </div>
+      <div class="location-search-row">
+        <input type="text" id="city-input" placeholder="Enter city name (e.g. Mumbai, Delhi…)" />
+        <button class="loc-btn loc-btn-fetch" onclick="fetchWeatherByCity()">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          Fetch Weather
+        </button>
+        <button class="loc-btn loc-btn-gps" onclick="fetchWeatherByGPS()">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+            <circle cx="12" cy="9" r="2.5" />
+          </svg>
+          Use My Location
+        </button>
+      </div>
+      <div id="location-status"></div>
+    </div>
+    <!-- ============================= -->
+
+    <form id="crop-form" class="modern-form" method="POST" action="{{ url_for('predict_crop') }}">
+
+      <div class="row">
+        <div class="col-md-6 form-group">
+          <label for="Nitrogen">Nitrogen (N) Content</label>
+          <input type="number" step="any" class="form-control" id="Nitrogen" name="nitrogen" placeholder="e.g. 50"
+            required />
+        </div>
+        <div class="col-md-6 form-group">
+          <label for="Phosphorous">Phosphorous (P) Content</label>
+          <input type="number" step="any" class="form-control" id="Phosphorous" name="phosphorous" placeholder="e.g. 50"
+            required />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 form-group">
+          <label for="Pottasium">Potassium (K) Content</label>
+          <input type="number" step="any" class="form-control" id="Pottasium" name="pottasium" placeholder="e.g. 50"
+            required />
+        </div>
+        <div class="col-md-6 form-group">
+          <label for="Temperature">
+            Temperature (°C)
+          </label>
+          <input type="number" step="any" class="form-control" id="Temperature" name="temperature"
+            placeholder="e.g. 25.5" required />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4 form-group">
+          <label for="Humidity">
+            Humidity (%)
+          </label>
+          <input type="number" step="any" class="form-control" id="Humidity" name="humidity" placeholder="e.g. 82.0"
+            required />
+        </div>
+        <div class="col-md-4 form-group">
+          <label for="ph">Soil pH Profile</label>
+          <input type="number" step="any" class="form-control" id="ph" name="ph" placeholder="e.g. 6.5" required />
+        </div>
+        <div class="col-md-4 form-group">
+          <label for="Rainfall">
+            Rainfall (mm)
+          </label>
+          <input type="number" step="any" class="form-control" id="Rainfall" name="rainfall" placeholder="e.g. 200"
+            required />
+        </div>
+      </div>
+
+      <div class="text-center mt-4">
+        <button id="predict-btn" type="submit"
+          class="btn-modern d-inline-flex justify-content-center align-items-center" style="gap: 8px;">
+          <i data-lucide="search"></i> Analyze &amp; Predict Crop
+        </button>
+      </div>
+    </form>
+
+    <div id="loader" class="loader-container">
+      <div class="spinner-modern"></div>
+      <p class="mt-3 text-muted font-weight-bold">Processing AI Model...</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ─── OpenWeatherMap API key ───────────────────────────────────────────────
+  const OWM_API_KEY = "4c4286de4f6a3794841e570fd8bc4a0b";
+
+  // ─── Helper: fill all three fields and show badges ────────────────────────
+  function fillWeatherFields(tempC, humidity, rainfallMm, cityLabel) {
+    document.getElementById('Temperature').value = tempC.toFixed(1);
+    document.getElementById('Humidity').value = humidity.toFixed(1);
+    document.getElementById('Rainfall').value = rainfallMm.toFixed(1);
+
+    setStatus(
+      `✅ Weather data fetched for <strong>${cityLabel}</strong>`,
+      'success'
+    );
+  }
+
+  // ─── Helper: status message ───────────────────────────────────────────────
+  function setStatus(msg, type) {
+    const el = document.getElementById('location-status');
+    el.innerHTML = msg;
+    el.className = type === 'success' ? 'status-success'
+      : type === 'error' ? 'status-error'
+        : 'status-loading';
+  }
+
+  // ─── Fetch past-30-day rainfall from Open-Meteo (free, no key needed) ────
+  async function fetchHistoricalRainfall(lat, lon) {
+    try {
+      const today = new Date();
+      const endDate = new Date(today); endDate.setDate(today.getDate() - 1);
+      const startDate = new Date(today); startDate.setDate(today.getDate() - 31);
+      const fmt = d => d.toISOString().split('T')[0];
+
+      const url = `https://archive-api.open-meteo.com/v1/archive` +
+        `?latitude=${lat}&longitude=${lon}` +
+        `&start_date=${fmt(startDate)}&end_date=${fmt(endDate)}` +
+        `&daily=precipitation_sum&timezone=auto`;
+
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (data && data.daily && data.daily.precipitation_sum) {
+        return data.daily.precipitation_sum.reduce((sum, v) => sum + (v || 0), 0);
+      }
+    } catch (e) {
+      console.warn('Open-Meteo fetch failed:', e);
+    }
+    return 0;
+  }
+
+  // ─── Parse OWM response, then fetch historical rainfall ──────────────────
+  async function applyOWMData(data) {
+    if (data.cod && data.cod !== 200 && data.cod !== '200') {
+      setStatus('❌ City not found. Please check the spelling and try again.', 'error');
+      return;
+    }
+    const tempC = data.main.temp - 273.15;
+    const humidity = data.main.humidity;
+    const lat = data.coord.lat;
+    const lon = data.coord.lon;
+
+    setStatus('📊 Fetching 30-day rainfall history… (this takes a moment)', 'loading');
+    const rainfall = await fetchHistoricalRainfall(lat, lon);
+
+    fillWeatherFields(tempC, humidity, rainfall, data.name);
+  }
+
+  // ─── Fetch by city name ───────────────────────────────────────────────────
+  async function fetchWeatherByCity() {
+    const city = document.getElementById('city-input').value.trim();
+    if (!city) { setStatus('⚠️ Please enter a city name first.', 'error'); return; }
+    setStatus('🔍 Fetching current weather…', 'loading');
+    try {
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${OWM_API_KEY}`;
+      const data = await (await fetch(url)).json();
+      await applyOWMData(data);
+    } catch (e) {
+      setStatus('❌ Network error. Please check your connection.', 'error');
+    }
+  }
+
+  // ─── Fetch by GPS coordinates ─────────────────────────────────────────────
+  function fetchWeatherByGPS() {
+    if (!navigator.geolocation) {
+      setStatus('❌ Geolocation is not supported by your browser.', 'error');
+      return;
+    }
+    setStatus('📍 Detecting your location…', 'loading');
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude: lat, longitude: lon } = pos.coords;
+        setStatus('🌐 Location found. Fetching weather…', 'loading');
+        try {
+          const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${OWM_API_KEY}`;
+          const data = await (await fetch(url)).json();
+          await applyOWMData(data);
+        } catch (e) {
+          setStatus('❌ Network error. Please check your connection.', 'error');
+        }
+      },
+      () => setStatus('❌ Location access denied. Enter city manually instead.', 'error')
+    );
+  }
+
+  // ─── Enter key → city search ──────────────────────────────────────────────
+  document.getElementById('city-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); fetchWeatherByCity(); }
+  });
+
+
+  // ─── Form submit loader ───────────────────────────────────────────────────
+  document.getElementById('crop-form').addEventListener('submit', function () {
+    document.getElementById('predict-btn').disabled = true;
+    document.getElementById('predict-btn').innerHTML = 'Analyzing…';
+    document.getElementById('loader').style.display = 'block';
+  });
+</script>
+
+{% endblock %}

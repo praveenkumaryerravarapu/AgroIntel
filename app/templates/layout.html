@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AgroIntel | Modern Farm Intelligence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}" />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Bootstrap (for grid layout mainly) -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  
+  <!-- Modern Custom CSS -->
+  <link href="{{ url_for('static', filename='css/style.css') }}" rel='stylesheet' type='text/css' />
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg modern-navbar fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="{{ url_for('home') }}" style="display:flex; align-items:center; gap:8px;">
+        <i data-lucide="leaf"></i> AgroIntel
+      </a>
+
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" style="border: none; outline: none;">
+        <i data-lucide="menu" style="color: var(--primary-color);"></i>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center" href="{{ url_for('home') }}"><i data-lucide="home" class="mr-1" style="width: 18px; height: 18px;"></i> Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center" href="{{ url_for('crop_recommendation') }}"><i data-lucide="leaf" class="mr-1" style="width: 18px; height: 18px;"></i> Crop</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center" href="{{ url_for('fertilizer_recommendation') }}"><i data-lucide="flask-conical" class="mr-1" style="width: 18px; height: 18px;"></i> Fertilizer</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center" href="{{ url_for('disease_prediction') }}"><i data-lucide="bug" class="mr-1" style="width: 18px; height: 18px;"></i> Disease</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content Block -->
+  <main>
+    {% block body %} {% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="modern-footer">
+    <div class="container">
+      <h2 class="logo2">
+        <a href="{{ url_for('home') }}" style="display:inline-flex; align-items:center; gap:8px;">
+          <i data-lucide="leaf"></i> AgroIntel
+        </a>
+      </h2>
+      <p>Data-Driven Farming Intelligence Platform</p>
+      <p style="font-size: 12px;">&copy; 2026 AgroIntel. All rights reserved. </p>
+      <!-- <p style="font-size: 12px;">Ananth | Bikram | Deepak | Farhan | Karthik | Sandeep</p> -->
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

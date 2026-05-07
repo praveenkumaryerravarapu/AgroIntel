@@ -1,0 +1,33 @@
+{% extends 'layout.html' %} {% block body %}
+
+
+
+
+<div class="container py-5 mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 text-center">
+      <div class="glass-panel" style="background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(254,226,226,0.9)); max-width: 600px; margin: 0 auto;">
+        
+        <div style="background: rgba(239,68,68,0.15); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+            <i data-lucide="alert-triangle" style="width: 36px; height: 36px; color: #ef4444;"></i>
+        </div>
+        
+        <h2 style="font-weight: 700; color: var(--text-dark); margin-bottom: 20px;">An Error Occurred</h2>
+        
+        <div class="p-4 rounded text-center" style="background: white; border: 1px solid rgba(239,68,68,0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+            <p style="font-size: 16px; font-weight: 500; color: var(--text-dark); margin-bottom: 0;">
+                Sorry we couldn't process your request currently. Please try again.
+            </p>
+        </div>
+
+        <div class="mt-4">
+            <a href="{{ url_for('home') }}" class="btn-modern d-inline-flex align-items-center" style="width: auto; padding: 10px 24px; font-size: 15px; gap: 8px;">
+                <i data-lucide="refresh-cw"></i> Try again
+            </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends 'layout.html' %} {% block body %}
+
+<div class="container py-5 mt-5">
+  <div class="row justify-content-center">
+    
+    <div class="col-md-8">
+      <div class="glass-panel text-center" style="background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(240,253,244,0.9)); max-width: 700px;">
+        
+        <div style="background: rgba(16,185,129,0.15); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+            <i data-lucide="leaf" style="width: 36px; height: 36px; color: var(--primary-color);"></i>
+        </div>
+
+        <h2 style="font-weight: 700; color: var(--text-dark); margin-bottom: 10px;">Optimal Crop Match</h2>
+        <h3 style="font-size: 2.2rem; font-weight: 800; color: var(--primary-color); text-transform: capitalize;">{{ crop }}</h3>
+        
+        <div class="d-flex justify-content-center gap-3 mt-3 mb-4" style="gap: 15px;">
+            {% if category %}
+            <span class="badge" style="background: #e2e8f0; color: #475569; padding: 8px 16px; font-size: 14px; border-radius: 20px;">
+                Category: {{ category }}
+            </span>
+            {% endif %}
+            
+            {% if confidence is not none %}
+            <span class="badge" style="background: rgba(16,185,129,0.1); color: var(--primary-hover); padding: 8px 16px; font-size: 14px; border-radius: 20px;">
+                Confidence: {{ '{:.1%}'.format(confidence) }}
+            </span>
+            {% endif %}
+        </div>
+
+        {% if tip %}
+        <div class="p-3 mb-4 text-left rounded" style="background: #fff; border-left: 4px solid var(--primary-color); box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
+            <p style="margin: 0; font-size: 15px; color: var(--text-dark);">
+                <strong class="d-inline-flex align-items-center" style="gap: 8px;"><i data-lucide="lightbulb" style="color: #fbbf24; width: 20px;"></i> Growing Tip:</strong> {{ tip }}
+            </p>
+        </div>
+        {% endif %}
+
+        <div class="text-center mt-3 mb-4">
+            <img src="{{ url_for('static', filename='images/crops/' + (crop_label or crop|lower) + '.jpg') }}" 
+                 alt="{{ crop }}" 
+                 class="rounded-circle shadow"
+                 style="width: 150px; height: 150px; object-fit: cover; border: 4px solid white;"
+                 onerror="this.style.display='none'"/>
+        </div>
+
+        {% if top_crops %}
+        <div class="mt-4 pt-4 border-top">
+            <h5 class="text-left" style="font-weight: 600; color: var(--text-dark); margin-bottom: 15px;">Alternative Suggestions</h5>
+            <div class="row">
+                {% for item in top_crops %}
+                <div class="col-md-4 mb-2">
+                    <div class="p-2 rounded" style="background: white; border: 1px solid #e5e7eb;">
+                        <div style="font-weight: 600; font-size: 15px; text-transform: capitalize;">{{ loop.index }}. {{ item.name }}</div>
+                        <div style="color: var(--primary-color); font-weight: 700; font-size: 13px;">{{ '{:.1%}'.format(item.probability) }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="mt-5 d-flex justify-content-center" style="gap: 15px;">
+            <a href="{{ url_for('crop_recommendation') }}" class="btn btn-outline-secondary d-inline-flex align-items-center" style="border-radius: 12px; padding: 12px 24px; font-weight: 600; gap: 8px;">
+                <i data-lucide="refresh-cw"></i> Recalculate
+            </a>
+            <a href="{{ url_for('fertilizer_recommendation', crop=crop_label) }}" class="btn-modern d-inline-flex align-items-center" style="width: auto; padding: 12px 24px; gap: 8px;">
+                Get Fertilizer Plan <i data-lucide="arrow-right"></i>
+            </a>
+        </div>
+
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+{% endblock %}

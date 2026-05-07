@@ -1,0 +1,39 @@
+{% extends 'layout.html' %} {% block body %}
+
+<div class="container py-5 mt-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-11 text-center">
+      
+      <div class="glass-panel mx-auto" style="background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(240,253,244,0.95)); max-width: 1050px; padding: 40px; border-radius: 24px; box-shadow: 0 10px 40px rgba(16,185,129,0.08);">
+        <div style="background: rgba(16,185,129,0.15); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+            <i data-lucide="stethoscope" style="width: 36px; height: 36px; color: var(--primary-color);"></i>
+        </div>
+        
+        <h2 style="font-weight: 800; color: var(--text-dark); margin-bottom: 30px; letter-spacing: -0.5px;">Diagnosis Result</h2>
+        
+        <div class="p-4 p-md-5 rounded-4" style="background: #ffffff; border: 1px solid rgba(16,185,129,0.15); box-shadow: 0 8px 30px rgba(0,0,0,0.04); position: relative; overflow: hidden; width: 100%;">
+            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--primary-color);"></div>
+            <div style="font-size: 18px; font-weight: 400; color: #4b5563; margin-bottom: 0; line-height: 1.7; text-align: left;">
+                <div class="prediction-text" style="width: 100%;">
+                    {% set text = prediction | string | replace('\r\n', '\n') | replace('\n\n\n', '\n\n') %}
+                    {% for paragraph in text.split('\n\n') %}
+                        {% if paragraph.strip() %}
+                            <p style="margin-bottom: 1.2rem;">{{ paragraph | replace('\n', ' ') | safe }}</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-5">
+            <a href="{{ url_for('disease_prediction') }}" class="btn-modern d-inline-flex align-items-center justify-content-center" style="width: auto; padding: 12px 30px; font-size: 16px; gap: 10px; border-radius: 50px; font-weight: 600; box-shadow: 0 4px 15px rgba(16,185,129,0.3);">
+                <i data-lucide="arrow-left" style="width: 20px; height: 20px;"></i> Scan Another Leaf
+            </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}

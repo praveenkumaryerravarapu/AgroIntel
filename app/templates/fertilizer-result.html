@@ -1,0 +1,31 @@
+{% extends 'layout.html' %} {% block body %}
+
+<div class="container py-5 mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 text-center">
+      
+      <div class="glass-panel" style="background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(240,253,244,0.9)); max-width: 600px;">
+        <div style="background: rgba(16,185,129,0.15); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+            <i data-lucide="flask-conical" style="width: 36px; height: 36px; color: var(--primary-color);"></i>
+        </div>
+        
+        <h2 style="font-weight: 700; color: var(--text-dark); margin-bottom: 20px;">Fertilizer Strategy</h2>
+        
+        <div class="p-4 rounded text-left" style="background: white; border: 1px solid rgba(16,185,129,0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+            <div style="font-size: 16px; font-weight: 500; color: var(--text-dark); margin-bottom: 0; line-height: 1.8;">
+                {{ recommendation | safe }}
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <a href="{{ url_for('fertilizer_recommendation') }}" class="btn-modern d-inline-flex align-items-center" style="width: auto; padding: 10px 24px; font-size: 15px; gap: 8px;">
+                <i data-lucide="arrow-left"></i> Calculate Again
+            </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}

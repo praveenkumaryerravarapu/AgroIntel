@@ -1,0 +1,177 @@
+{% extends 'layout.html' %}
+{% block body %}
+
+<style>
+    /* Scoped styles for index to augment the core design */
+    .hero-section {
+        position: relative;
+        padding: 160px 0 120px 0;
+        min-height: 85vh;
+        display: flex;
+        align-items: center;
+        background: url("{{ url_for('static', filename='images/hero_bg.png') }}") center center;
+        background-size: cover;
+        color: white;
+    }
+
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(16, 185, 129, 0.4) 100%);
+        z-index: 1;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .hero-title {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        letter-spacing: -1px;
+    }
+
+    .hero-subtitle {
+        font-size: 1.25rem;
+        font-weight: 300;
+        margin-bottom: 40px;
+        opacity: 0.9;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .services-section {
+        padding: 100px 0;
+        background: transparent;
+        position: relative;
+        margin-top: -60px;
+        /* pull up into the hero slightly */
+        z-index: 3;
+    }
+
+    .metrics-section {
+        padding: 80px 0;
+        background: white;
+    }
+
+    .metric-item {
+        text-align: center;
+        padding: 20px;
+    }
+
+    .metric-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+</style>
+
+<!-- HERO -->
+<section class="hero-section text-center">
+    <div class="hero-overlay"></div>
+    <div class="container hero-content">
+        <h1 class="hero-title">Intelligent Farming<br>Made Simple</h1>
+        <p class="hero-subtitle">
+            Leverage AI, machine learning, and data analytics to maximize your crop yields, monitor plant health, and
+            optimize resource usage.
+        </p>
+        <a href="{{ url_for('static', filename='AgriSens-web-app/guide/index.html') }}"
+            class="btn-modern d-inline-flex align-items-center"
+            style="width: auto; padding: 15px 40px; font-size: 18px;">
+            Explore Data <i data-lucide="arrow-right" class="ml-2"></i>
+        </a>
+    </div>
+</section>
+
+<!-- SERVICES GRID -->
+<section id="services" class="services-section">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h2 class="page-title" style="color: var(--text-dark);">Platform Capabilities</h2>
+                <p class="page-subtitle">Choose an AI tool below to get started</p>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+
+            <div class="col-lg-4 col-md-6 mb-4">
+                <a href="{{ url_for('crop_recommendation') }}" style="text-decoration:none;">
+                    <div class="glass-card p-4" style="text-align: center;">
+                        <div
+                            style="background: rgba(16,185,129,0.1); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                            <i data-lucide="leaf" style="width: 32px; height: 32px; color: var(--primary-color);"></i>
+                        </div>
+                        <h4 style="color: var(--text-dark); font-weight: 600; margin-bottom: 15px;">Crop Recommendation
+                        </h4>
+                        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 0;">
+                            Find the optimal crop to plant based on precise soil nutrients and climate conditions.
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-lg-4 col-md-6 mb-4">
+                <a href="{{ url_for('fertilizer_recommendation') }}" style="text-decoration:none;">
+                    <div class="glass-card p-4" style="text-align: center;">
+                        <div
+                            style="background: rgba(16,185,129,0.1); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                            <i data-lucide="flask-conical"
+                                style="width: 32px; height: 32px; color: var(--primary-color);"></i>
+                        </div>
+                        <h4 style="color: var(--text-dark); font-weight: 600; margin-bottom: 15px;">Fertilizer
+                            Optimization</h4>
+                        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 0;">
+                            Get AI-driven nitrogen, phosphorous, and potassium recommendations.
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-lg-4 col-md-6 mb-4">
+                <a href="{{ url_for('disease_prediction') }}" style="text-decoration:none;">
+                    <div class="glass-card p-4" style="text-align: center;">
+                        <div
+                            style="background: rgba(16,185,129,0.1); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                            <i data-lucide="bug" style="width: 32px; height: 32px; color: var(--primary-color);"></i>
+                        </div>
+                        <h4 style="color: var(--text-dark); font-weight: 600; margin-bottom: 15px;">Disease Detection
+                        </h4>
+                        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 0;">
+                            Upload a picture of an infected leaf to immediately identify and treat the disease.
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- METRICS -->
+<section class="metrics-section">
+    <div class="container border-top pt-5">
+        <div class="row">
+            <div class="col-md-4 metric-item">
+                <div class="metric-value">98%</div>
+                <div style="color: var(--text-muted); font-weight: 500;">Prediction Accuracy</div>
+            </div>
+            <div class="col-md-4 metric-item">
+                <div class="metric-value">30+</div>
+                <div style="color: var(--text-muted); font-weight: 500;">Supported Crops</div>
+            </div>
+            <div class="col-md-4 metric-item">
+                <div class="metric-value">14+</div>
+                <div style="color: var(--text-muted); font-weight: 500;">Detectible Diseases</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
