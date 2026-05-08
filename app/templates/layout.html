@@ -17,9 +17,50 @@
   
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Hide Google Translate default toolbar & banner -->
+  <style>
+    .goog-te-banner-frame, .goog-te-balloon-frame { display: none !important; }
+    body { top: 0 !important; }
+    .goog-te-gadget { display: none !important; }
+    .skiptranslate { display: none !important; }
+
+    /* Language toggle pill */
+    .lang-toggle {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(16,185,129,0.1);
+      border: 1.5px solid rgba(16,185,129,0.35);
+      border-radius: 999px;
+      padding: 3px 5px;
+      gap: 3px;
+      cursor: pointer;
+      margin-left: 12px;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .lang-toggle:hover { background: rgba(16,185,129,0.18); border-color: var(--primary-color); }
+    .lang-toggle .lang-opt {
+      padding: 4px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #6b7280;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .lang-toggle .lang-opt.active {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(16,185,129,0.35);
+    }
+  </style>
   
 </head>
 <body>
+
+  <!-- Hidden Google Translate Element -->
+  <div id="google_translate_element" style="display:none;"></div>
 
   <!-- Navigation -->
   <nav class="navbar navbar-expand-lg modern-navbar fixed-top">
@@ -33,7 +74,7 @@
       </button>
 
       <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav ml-auto">
+        <ul class="navbar-nav ml-auto align-items-center">
           <li class="nav-item">
             <a class="nav-link d-flex align-items-center" href="{{ url_for('home') }}"><i data-lucide="home" class="mr-1" style="width: 18px; height: 18px;"></i> Home</a>
           </li>
@@ -46,10 +87,87 @@
           <li class="nav-item">
             <a class="nav-link d-flex align-items-center" href="{{ url_for('disease_prediction') }}"><i data-lucide="bug" class="mr-1" style="width: 18px; height: 18px;"></i> Disease</a>
           </li>
+
+          <!-- Language Toggle -->
+          <li class="nav-item">
+            <div class="lang-toggle" id="langToggle" onclick="toggleLanguage()" title="Translate to Hindi / English">
+              <span class="lang-opt active" id="opt-en">EN</span>
+              <span class="lang-opt"        id="opt-hi">हिंदी</span>
+            </div>
+          </li>
+
+          <!-- Auth -->
+          {% if current_user.is_authenticated %}
+          <li class="nav-item ml-2">
+            <div class="dropdown">
+              <button class="btn d-flex align-items-center" style="background:rgba(16,185,129,0.1);border:1.5px solid rgba(16,185,129,0.3);border-radius:999px;padding:6px 14px;font-weight:600;font-size:14px;color:var(--text-dark);gap:7px;" id="userMenuBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i data-lucide="user-circle" style="width:18px;height:18px;color:var(--primary-color);"></i>
+                {{ current_user.username }}
+                <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
+              </button>
+              <div class="dropdown-menu dropdown-menu-right" style="border-radius:14px;border:none;box-shadow:0 8px 30px rgba(0,0,0,0.1);padding:8px;min-width:170px;">
+                <a class="dropdown-item d-flex align-items-center" href="{{ url_for('history') }}" style="border-radius:10px;padding:10px 14px;font-weight:500;gap:8px;">
+                  <i data-lucide="clock" style="width:16px;height:16px;color:var(--primary-color);"></i> My History
+                </a>
+                <div class="dropdown-divider" style="margin:6px 0;"></div>
+                <a class="dropdown-item d-flex align-items-center" href="{{ url_for('logout') }}" style="border-radius:10px;padding:10px 14px;font-weight:500;gap:8px;color:#ef4444;">
+                  <i data-lucide="log-out" style="width:16px;height:16px;"></i> Sign Out
+                </a>
+              </div>
+            </div>
+          </li>
+          {% else %}
+          <li class="nav-item ml-1">
+            <a href="{{ url_for('login') }}" class="nav-link d-flex align-items-center" style="font-weight:600;gap:5px;">
+              <i data-lucide="log-in" style="width:16px;height:16px;"></i> Login
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{{ url_for('signup') }}" style="background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:999px;padding:8px 18px;font-size:14px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:5px;margin-left:4px;">
+              <i data-lucide="user-plus" style="width:15px;height:15px;"></i> Sign Up
+            </a>
+          </li>
+          {% endif %}
+
         </ul>
       </div>
     </div>
   </nav>
+
+  <!-- Flash Messages (auto-dismiss after 3.5s) -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div id="flash-container" style="position:fixed;top:76px;right:16px;z-index:9999;min-width:280px;max-width:380px;">
+      {% for category, message in messages %}
+      <div class="flash-toast alert alert-{{ 'danger' if category == 'error' else 'success' }} d-flex align-items-center justify-content-between" role="alert"
+           style="border-radius:14px;font-weight:500;font-size:14px;box-shadow:0 4px 20px rgba(0,0,0,0.12);border:none;animation:slideIn .35s ease;transition:opacity .5s ease,transform .5s ease;gap:10px;">
+        <span class="d-flex align-items-center" style="gap:8px;">
+          <i data-lucide="{{ 'alert-circle' if category == 'error' else 'check-circle' }}" style="width:18px;height:18px;flex-shrink:0;"></i>
+          {{ message }}
+        </span>
+        <button onclick="this.closest('.flash-toast').remove()" style="background:none;border:none;cursor:pointer;opacity:.55;padding:0;line-height:1;font-size:16px;flex-shrink:0;" title="Dismiss">✕</button>
+      </div>
+      {% endfor %}
+    </div>
+    <style>
+      @keyframes slideIn { from { opacity:0; transform:translateX(40px); } to { opacity:1; transform:translateX(0); } }
+    </style>
+    <script>
+      // Auto-dismiss toasts after 3.5 seconds
+      setTimeout(function () {
+        var container = document.getElementById('flash-container');
+        if (container) {
+          var toasts = container.querySelectorAll('.flash-toast');
+          toasts.forEach(function(t) {
+            t.style.opacity = '0';
+            t.style.transform = 'translateX(40px)';
+          });
+          setTimeout(function() { if (container) container.remove(); }, 520);
+        }
+      }, 3500);
+    </script>
+    {% endif %}
+  {% endwith %}
 
   <!-- Main Content Block -->
   <main>
@@ -66,7 +184,7 @@
       </h2>
       <p>Data-Driven Farming Intelligence Platform</p>
       <p style="font-size: 12px;">&copy; 2026 AgroIntel. All rights reserved. </p>
-      <!-- <p style="font-size: 12px;">Ananth | Bikram | Deepak | Farhan | Karthik | Sandeep</p> -->
+      <p style="font-size: 12px;">Ananth | Bikram | Deepak | Farhan | Karthik | Sandeep</p>
     </div>
   </footer>
 
@@ -78,5 +196,60 @@
   <script>
     lucide.createIcons();
   </script>
+
+  <!-- Google Translate Script -->
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement(
+        { pageLanguage: 'en', includedLanguages: 'hi,en', autoDisplay: false },
+        'google_translate_element'
+      );
+    }
+  </script>
+  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+  <script>
+    // ── Language Toggle Logic ──────────────────────────────────────────────
+    let isHindi = false;
+
+    function setActivePill(hindi) {
+      document.getElementById('opt-en').classList.toggle('active', !hindi);
+      document.getElementById('opt-hi').classList.toggle('active',  hindi);
+    }
+
+    function triggerGoogleTranslate(langCode) {
+      // Finds the hidden <select> injected by Google Translate and changes it
+      const select = document.querySelector('.goog-te-combo');
+      if (select) {
+        select.value = langCode;
+        select.dispatchEvent(new Event('change'));
+      }
+    }
+
+    function toggleLanguage() {
+      isHindi = !isHindi;
+      setActivePill(isHindi);
+      localStorage.setItem('agro_lang', isHindi ? 'hi' : 'en');
+      // Give the widget a moment to fully initialise on first click
+      setTimeout(() => triggerGoogleTranslate(isHindi ? 'hi' : 'en'), 100);
+    }
+
+    // Restore saved preference after the widget loads
+    window.addEventListener('load', function () {
+      const saved = localStorage.getItem('agro_lang');
+      if (saved === 'hi') {
+        isHindi = true;
+        setActivePill(true);
+        // Widget may not be ready immediately — retry a few times
+        let attempts = 0;
+        const iv = setInterval(() => {
+          const select = document.querySelector('.goog-te-combo');
+          if (select) { triggerGoogleTranslate('hi'); clearInterval(iv); }
+          if (++attempts > 20) clearInterval(iv);
+        }, 300);
+      }
+    });
+  </script>
+
 </body>
 </html>

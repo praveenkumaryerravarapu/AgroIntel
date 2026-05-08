@@ -18,18 +18,32 @@
     <form class="modern-form" method="POST" action="{{ url_for('fert_recommend') }}">
       
       <div class="form-group">
-        <label for="Nitrogen">Nitrogen (N) Value</label>
-        <input type="number" class="form-control" id="Nitrogen" name="nitrogen" placeholder="e.g. 50" required />
+        <label for="Nitrogen">Nitrogen (N) Value
+          {% if preselected_n %}<span style="font-size:11px; background:#d1fae5; color:#065f46; border-radius:5px; padding:1px 7px; font-weight:700; margin-left:5px;">Auto-filled ✓</span>{% endif %}
+        </label>
+        <input type="number" class="form-control" id="Nitrogen" name="nitrogen" placeholder="e.g. 50" value="{{ preselected_n }}" required />
       </div>
 
       <div class="form-group">
-        <label for="Phosphorous">Phosphorous (P) Value</label>
-        <input type="number" class="form-control" id="Phosphorous" name="phosphorous" placeholder="e.g. 50" required />
+        <label for="Phosphorous">Phosphorous (P) Value
+          {% if preselected_p %}<span style="font-size:11px; background:#d1fae5; color:#065f46; border-radius:5px; padding:1px 7px; font-weight:700; margin-left:5px;">Auto-filled ✓</span>{% endif %}
+        </label>
+        <input type="number" class="form-control" id="Phosphorous" name="phosphorous" placeholder="e.g. 50" value="{{ preselected_p }}" required />
       </div>
 
       <div class="form-group">
-        <label for="Pottasium">Potassium (K) Value</label>
-        <input type="number" class="form-control" id="Pottasium" name="pottasium" placeholder="e.g. 50" required />
+        <label for="Pottasium">Potassium (K) Value
+          {% if preselected_k %}<span style="font-size:11px; background:#d1fae5; color:#065f46; border-radius:5px; padding:1px 7px; font-weight:700; margin-left:5px;">Auto-filled ✓</span>{% endif %}
+        </label>
+        <input type="number" class="form-control" id="Pottasium" name="pottasium" placeholder="e.g. 50" value="{{ preselected_k }}" required />
+      </div>
+
+      <div class="form-group">
+        <label for="ph">Soil pH
+          {% if preselected_ph %}<span style="font-size:11px; background:#d1fae5; color:#065f46; border-radius:5px; padding:1px 7px; font-weight:700; margin-left:5px;">Auto-filled ✓</span>{% endif %}
+        </label>
+        <input type="number" step="0.1" min="0" max="14" class="form-control" id="ph" name="ph" placeholder="e.g. 6.5" value="{{ preselected_ph }}" required />
+      </div>
       </div>
 
       <div class="form-group">

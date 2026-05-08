@@ -63,7 +63,7 @@
             <a href="{{ url_for('crop_recommendation') }}" class="btn btn-outline-secondary d-inline-flex align-items-center" style="border-radius: 12px; padding: 12px 24px; font-weight: 600; gap: 8px;">
                 <i data-lucide="refresh-cw"></i> Recalculate
             </a>
-            <a href="{{ url_for('fertilizer_recommendation', crop=crop_label) }}" class="btn-modern d-inline-flex align-items-center" style="width: auto; padding: 12px 24px; gap: 8px;">
+            <a href="{{ url_for('fertilizer_recommendation', crop=crop_label, n=nitrogen, p=phosphorous, k=pottasium, ph=ph) }}" class="btn-modern d-inline-flex align-items-center" style="width: auto; padding: 12px 24px; gap: 8px;">
                 Get Fertilizer Plan <i data-lucide="arrow-right"></i>
             </a>
         </div>

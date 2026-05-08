@@ -1,0 +1,52 @@
+{% extends 'layout.html' %}
+{% block body %}
+
+<div class="container py-5 mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-5">
+
+      <div class="glass-panel text-center" style="max-width:460px;">
+
+        <!-- Icon -->
+        <div style="background:rgba(16,185,129,0.12);width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;">
+          <i data-lucide="log-in" style="width:30px;height:30px;color:var(--primary-color);"></i>
+        </div>
+
+        <h2 style="font-weight:700;color:var(--text-dark);margin-bottom:4px;">Welcome Back</h2>
+        <p style="color:var(--text-muted);font-size:14px;margin-bottom:28px;">Sign in to save & view your recommendation history</p>
+
+        <form class="modern-form text-left" method="POST" action="{{ url_for('login') }}">
+
+          <div class="form-group">
+            <label for="login-email">Email Address</label>
+            <input type="email" class="form-control" id="login-email" name="email" placeholder="you@example.com" required />
+          </div>
+
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <input type="password" class="form-control" id="login-password" name="password" placeholder="••••••••" required />
+          </div>
+
+          <button type="submit" class="btn-modern d-flex justify-content-center align-items-center mt-4" style="gap:8px;">
+            <i data-lucide="log-in" style="width:18px;height:18px;"></i> Sign In
+          </button>
+        </form>
+
+        <hr style="margin:24px 0;border-color:#e5e7eb;">
+
+        <p style="color:var(--text-muted);font-size:14px;">
+          Don't have an account?
+          <a href="{{ url_for('signup') }}" style="color:var(--primary-color);font-weight:600;">Create one free</a>
+        </p>
+        <p style="margin-top:8px;">
+          <a href="{{ url_for('home') }}" style="color:var(--text-muted);font-size:13px;text-decoration:none;">
+            ← Continue without logging in
+          </a>
+        </p>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

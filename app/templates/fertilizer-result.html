@@ -2,28 +2,70 @@
 
 <div class="container py-5 mt-5">
   <div class="row justify-content-center">
-    <div class="col-md-8 text-center">
-      
-      <div class="glass-panel" style="background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(240,253,244,0.9)); max-width: 600px;">
+    <div class="col-12 col-lg-11 text-center">
+
+      <div class="glass-panel mx-auto" style="background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(240,253,244,0.95)); max-width: 1050px; padding: 40px; border-radius: 24px; box-shadow: 0 10px 40px rgba(16,185,129,0.08);">
+
         <div style="background: rgba(16,185,129,0.15); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
             <i data-lucide="flask-conical" style="width: 36px; height: 36px; color: var(--primary-color);"></i>
         </div>
-        
-        <h2 style="font-weight: 700; color: var(--text-dark); margin-bottom: 20px;">Fertilizer Strategy</h2>
-        
-        <div class="p-4 rounded text-left" style="background: white; border: 1px solid rgba(16,185,129,0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
-            <div style="font-size: 16px; font-weight: 500; color: var(--text-dark); margin-bottom: 0; line-height: 1.8;">
-                {{ recommendation | safe }}
+
+        <h2 style="font-weight: 800; color: var(--text-dark); margin-bottom: 8px; letter-spacing: -0.5px;">Fertilizer Strategy</h2>
+        {% if crop_name %}
+        <p style="color: #6b7280; font-size: 16px; margin-bottom: 30px;">
+          Recommendations for <strong>{{ crop_name }}</strong> &mdash;
+          Your pH: <strong>{{ ph_input }}</strong> &nbsp;|&nbsp; Ideal pH: <strong>{{ ph_ideal }}</strong>
+        </p>
+        {% endif %}
+
+        {% if ph_primary %}
+        <!-- CRITICAL pH WARNING — shown first -->
+        <div class="p-4 p-md-5 rounded-4 mb-4" style="background: #fff8f0; border: 2px solid rgba(239,68,68,0.4); box-shadow: 0 8px 30px rgba(239,68,68,0.06); position: relative; overflow: hidden; width: 100%; text-align: left;">
+            <div style="position: absolute; top: 0; left: 0; width: 5px; height: 100%; background: #ef4444;"></div>
+            <div style="font-size: 17px; font-weight: 400; color: #4b5563; line-height: 1.8;">
+                {{ ph_primary | safe }}
             </div>
         </div>
 
+        <!-- NPK advice as secondary below -->
+        <h5 style="text-align: left; font-weight: 700; color: var(--text-dark); margin-bottom: 12px; margin-top: 10px;">
+          Also: Nutrient (N-P-K) Advice
+        </h5>
+        <div class="p-4 p-md-5 rounded-4 mb-4" style="background: #ffffff; border: 1px solid rgba(16,185,129,0.15); box-shadow: 0 8px 30px rgba(0,0,0,0.04); position: relative; overflow: hidden; width: 100%; text-align: left;">
+            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--primary-color);"></div>
+            <div style="font-size: 17px; font-weight: 400; color: #4b5563; line-height: 1.8;">
+                {{ npk_advice | safe }}
+            </div>
+        </div>
+
+        {% else %}
+        <!-- Normal flow: NPK advice first -->
+        <div class="p-4 p-md-5 rounded-4 mb-4" style="background: #ffffff; border: 1px solid rgba(16,185,129,0.15); box-shadow: 0 8px 30px rgba(0,0,0,0.04); position: relative; overflow: hidden; width: 100%; text-align: left;">
+            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--primary-color);"></div>
+            <div style="font-size: 17px; font-weight: 400; color: #4b5563; line-height: 1.8;">
+                {{ npk_advice | safe }}
+            </div>
+        </div>
+
+        {% if ph_advisory %}
+        <!-- Mild pH advisory below NPK advice -->
+        <div class="p-4 rounded-4 mb-4" style="background: #fffbeb; border: 1px solid rgba(251,191,36,0.5); box-shadow: 0 4px 15px rgba(251,191,36,0.08); position: relative; overflow: hidden; text-align: left;">
+            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #fbbf24;"></div>
+            <div style="font-size: 16px; color: #78350f; line-height: 1.7; padding-left: 8px;">
+                ⚠️ {{ ph_advisory | safe }}
+            </div>
+        </div>
+        {% endif %}
+
+        {% endif %}
+
         <div class="mt-4">
-            <a href="{{ url_for('fertilizer_recommendation') }}" class="btn-modern d-inline-flex align-items-center" style="width: auto; padding: 10px 24px; font-size: 15px; gap: 8px;">
-                <i data-lucide="arrow-left"></i> Calculate Again
+            <a href="{{ url_for('fertilizer_recommendation') }}" class="btn-modern d-inline-flex align-items-center justify-content-center" style="width: auto; padding: 12px 30px; font-size: 16px; gap: 10px; border-radius: 50px; font-weight: 600; box-shadow: 0 4px 15px rgba(16,185,129,0.3);">
+                <i data-lucide="arrow-left" style="width: 20px; height: 20px;"></i> Analyse Again
             </a>
         </div>
-      </div>
 
+      </div>
     </div>
   </div>
 </div>
