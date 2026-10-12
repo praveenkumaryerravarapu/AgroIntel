@@ -39,7 +39,7 @@ Follow these steps to set up the project on your local machine or a new device.
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/Bikramdash/AgroIntel.git
+   git clone https://github.com/praveenkumaryerravarapu/AgroIntel.git
    cd AgroIntel
    ```
 
